@@ -3,170 +3,1526 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../nombres/escudos/chihuahua.png" type="image/png">
-    <link rel="stylesheet" href="../style.css">
-    <title>Chihuahua - Estados de México</title>
+    <title>UPC•IA - Asistente Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    
     <style>
-        /* Estilos para centrar las imágenes */
-        .card-content {
+        :root {
+            --primary-red: #cc0000;
+            --primary-dark: #990000;
+            --primary-light: #ff3333;
+            --accent-red: #ff6b6b;
+            --dark-gray: #2d3748;
+            --medium-gray: #4a5568;
+            --light-gray: #718096;
+            --bg-gray: #f7fafc;
+            --card-gray: #edf2f7;
+            --white: #ffffff;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --gradient: linear-gradient(135deg, var(--primary-red), var(--primary-dark));
+            --radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gray) 0%, #e2e8f0 100%);
+            color: var(--dark-gray);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
             display: flex;
-            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: var(--white);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            transform: translateX(0);
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            padding: 30px 25px;
+            background: var(--gradient);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
             align-items: center;
-            height: 100%;
+            justify-content: center;
+            gap: 10px;
+            animation: logoPulse 3s ease-in-out infinite;
         }
-        
-        .card-image-side {
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .new-chat-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .new-chat-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .history-section {
+            flex: 1;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-header {
+            padding: 0 25px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .history-title {
+            font-size: 1rem;
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .clear-history {
+            background: none;
+            border: none;
+            color: var(--light-gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .clear-history:hover {
+            color: var(--primary-red);
+        }
+
+        .search-container {
+            padding: 0 25px 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
+            outline: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: var(--card-gray);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+
+        .history-item {
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-light);
+            transform: translateX(5px);
+        }
+
+        .history-item.active {
+            border-color: var(--primary-red);
+            background: var(--card-gray);
+        }
+
+        .history-preview {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--light-gray);
+        }
+
+        .delete-history {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--light-gray);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .history-item:hover .delete-history {
+            opacity: 1;
+        }
+
+        .delete-history:hover {
+            color: var(--primary-red);
+            background: rgba(204, 0, 0, 0.1);
+        }
+
+        /* Main Chat Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: var(--white);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-gray);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #48bb78;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: var(--bg-gray);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .welcome-container {
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: var(--medium-gray);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .capability-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+        }
+
+        .capability-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .capability-icon {
+            font-size: 2rem;
+            color: var(--primary-red);
+            margin-bottom: 10px;
+        }
+
+        .capability-text {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        /* Messages */
+        .message {
+            max-width: 80%;
+            padding: 20px;
+            border-radius: var(--radius);
+            line-height: 1.6;
+            position: relative;
+            animation: messageSlide 0.5s ease-out;
+            box-shadow: var(--shadow);
+            display: flex; 
+            flex-direction: column;
+        }
+
+        @keyframes messageSlide {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .bot-message {
+            background: var(--white);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+            border-left: 4px solid var(--primary-red);
+        }
+
+        .user-message {
+            background: var(--gradient);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+            position: relative;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        /* Estilos para matemáticas */
+        .katex { 
+            font-size: 1.1em; 
         }
         
-        /* Ajustes para las tarjetas de comida y traje */
-        .food-card, .clothing-card {
-            min-height: 250px;
+        .katex-display {
+            margin: 1em 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        
+        .katex-display > .katex {
+            white-space: nowrap;
+        }
+
+        .math-container {
+            margin: 10px 0;
+        }
+
+        .math-inline {
+            display: inline;
+        }
+
+        .math-block {
+            display: block;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 25px 30px;
+            background: var(--white);
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-area input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            outline: none;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .input-area input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .send-btn {
+            padding: 18px 25px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--gradient);
+            color: var(--white);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .send-btn:disabled {
+            background: var(--light-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+            border-left: 4px solid var(--primary-red);
+            box-shadow: var(--shadow);
+            animation: typingPulse 1.5s infinite;
+        }
+
+        @keyframes typingPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--primary-red);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0.8); }
+            40% { transform: scale(1.2); }
+        }
+
+        /* Configuración */
+        .config-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .config-toggle {
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .config-toggle:hover {
+            transform: rotate(45deg) scale(1.1);
+        }
+
+        .config-panel {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            width: 350px;
+            z-index: 100;
+            display: none;
+            animation: panelSlide 0.4s ease-out;
+        }
+
+        @keyframes panelSlide {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .config-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .close-config {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-config:hover {
+            color: var(--primary-red);
+            transform: rotate(90deg);
+        }
+
+        .api-input-group {
+            margin-bottom: 15px;
+        }
+
+        .api-input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .api-input-group input:focus {
+            border-color: var(--primary-red);
+        }
+
+        .model-selector {
+            margin: 15px 0;
+        }
+
+        .model-selector select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: var(--white);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .model-selector select:focus {
+            border-color: var(--primary-red);
+        }
+
+        .config-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--gradient);
+            color: var(--white);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .config-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .config-panel {
+                width: 90%;
+                left: 5%;
+            }
+            
+            .capabilities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--light-gray);
+        }
+
+        .empty-history i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Botón para mostrar/ocultar sidebar en móviles */
+        .sidebar-toggle {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                position: absolute;
+                height: 100%;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <div class="header">
-        <a href="../index.html" class="logo">MÉXICO</a>
-        <div class="state-header">
-            <h1 class="state-name">Chihuahua</h1>
-            <img src="../nombres/escudos/chihuahua.png" alt="Escudo de Chihuahua" class="state-shield">
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo-section">
+                <div class="logo">
+                    <span>UPC</span>
+                    <i class="fas fa-brain"></i>
+                    <span>IA</span>
+                </div>
+                <div class="logo-text">Asistente Inteligente</div>
+                
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    Nueva Conversación
+                </button>
+            </div>
+            
+            <div class="history-section">
+                <div class="history-header">
+                    <div class="history-title">Historial de Conversaciones</div>
+                    <button class="clear-history" id="clearHistory" title="Limpiar todo el historial">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchHistory" placeholder="Buscar conversaciones...">
+                </div>
+                
+                <div class="history-list" id="historyList">
+                    <div class="empty-history" id="emptyHistory">
+                        <i class="fas fa-comments"></i>
+                        <p>No hay conversaciones aún</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-header">
+                <div class="chat-title" id="currentChatTitle">Nueva Conversación</div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="statusText">Conectado y listo</span>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-container">
+                    <h1 class="welcome-title">¡Bienvenido a UPC•IA! 🚀</h1>
+                    <p class="welcome-subtitle">
+                        Soy tu asistente inteligente especializado en educación superior. 
+                        Puedo ayudarte con matemáticas, programación, ciencias, investigación 
+                        y cualquier tema académico que necesites.
+                    </p>
+                    
+                    <div class="capabilities-grid">
+                        <div class="capability-card">
+                            <div class="capability-icon">🧮</div>
+                            <div class="capability-text">Cálculo y Álgebra</div>
+                        </div>
+                        <div class="capability-card">
+                            <div class="capability-icon">💻</div>
+                            <div class="capability-text">Programación</div>
+                        </div>
+                        <div class="capability-card">
+                            <div class="capability-icon">🔬</div>
+                            <div class="capability-text">Ciencias e Ingeniería</div>
+                        </div>
+                        <div class="capability-card">
+                            <div class="capability-icon">📚</div>
+                            <div class="capability-text">Investigación</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="Escribe tu pregunta o consulta aquí...">
+                </div>
+                <button class="send-btn" id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Enviar</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="config-container">
+            <button class="config-toggle" id="configToggle">
+                <i class="fas fa-cog"></i>
+            </button>
+
+            <div class="config-panel" id="configPanel">
+                <div class="config-header">
+                    <div class="config-title">Configuración de API</div>
+                    <button class="close-config" id="closeConfig">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="api-input-group">
+                    <input type="password" id="groqApiKey" placeholder="API Key de Groq (gratuita)">
+                </div>
+                
+                <div class="model-selector">
+                    <select id="modelSelect">
+                        <option value="llama-3.1-8b-instant">Llama 3.1 8B (Rápido)</option>
+                        <option value="llama-3.1-70b-versatile">Llama 3.1 70B (Potente)</option>
+                        <option value="mixtral-8x7b-32768">Mixtral 8x7B (Balanceado)</option>
+                    </select>
+                </div>
+                
+                <button class="config-btn" id="saveConfig">
+                    <i class="fas fa-save"></i>
+                    Guardar Configuración
+                </button>
+                
+                <div class="success-message" id="apiSuccess" style="display:none; margin-top:15px;"></div>
+                <div class="error-message" id="apiError" style="display:none; margin-top:15px;"></div>
+            </div>
         </div>
     </div>
-
-    <div class="main-container">
-
-        <div class="column history-column">
-            <h2 class="section-title">Historia</h2>
-            <div class="history-text">
-                <p>Chihuahua fue habitado por pueblos indígenas como los tarahumaras y conchos. En el siglo XVII se establecieron misiones españolas y surgió como centro minero. Participó activamente en la independencia y fue sede temporal del gobierno de Benito Juárez durante la intervención francesa.</p>
-                <p><strong>Escudo:</strong> Muestra una torre, un león y un sol naciente, que simbolizan la fortaleza, el valor y la esperanza del pueblo chihuahuense.</p>
-            </div>
-        </div>
-
-
-        <div class="column territory-column">
-            <h2 class="section-title">Territorio</h2>
-            <div class="territory-content">
-                <div class="territory-text">
-                    <p>Es el estado más grande de México con una superficie de 247,455 km². Limita con Sonora, Coahuila, Durango y Estados Unidos.</p>
-                    <p>Su relieve destaca por la Sierra Madre Occidental y el desierto de Chihuahua. El clima varía entre templado, frío y desértico.</p>
-                </div>
-                <div class="minimapa-container">
-                    <img src="../nombres/minimapas/chihuahua.gif" alt="Minimapa de Chihuahua" class="minimapa-img" onclick="openModal(this)">
-                </div>
-            </div>
-        </div>
-
-
-        <div class="column culture-column">
-            <div class="culture-card food-card">
-                <h3 class="card-title">Comida Típica</h3>
-                <div class="card-content">
-                    <img src="../nombres/platillos/chihuahua.png" alt="Comida típica de Chihuahua" class="card-image-side" onclick="openModal(this)">
-                </div>
-            </div>
-
-            <div class="culture-card clothing-card">
-                <h3 class="card-title">Traje Típico</h3>
-                <div class="card-content">
-                    <img src="../nombres/trajes/chihuahua.jpg" alt="Traje típico de Chihuahua" class="card-image-side" onclick="openModal(this)">
-                </div>
-            </div>
-
-            <div class="culture-card map-card">
-                <h3 class="card-title">Ubicación</h3>
-                <div class="map-full-container">
-                    <img src="../nombres/mapas/chihuahua.png" alt="Mapa de México con Chihuahua" class="mapa-mexico-full" onclick="openMapModal()">
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <a href="../index.html" class="back-btn">← Volver al Inicio</a>
-        </div>
-    </div>
-
-    <div id="imageModal" class="modal">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div class="modal-content">
-            <img id="modalImage" class="modal-image">
-            <div id="modalCaption" class="modal-caption"></div>
-        </div>
-    </div>
+    
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
     <script>
-        function crearParticulas() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 8;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const size = Math.random() * 3 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.animationDelay = `${Math.random() * 15}s`;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        function openModal(img) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            const captionText = document.getElementById('modalCaption');
-            
-            modal.style.display = "block";
-            modalImg.src = img.src;
-            captionText.innerHTML = img.alt;
-        }
-
-        function openMapModal() {
-            window.open('https://maps.app.goo.gl/8QhxJxLVyfsfZ3GGA', '_blank');
-        }
-
-        function closeModal() {
-            document.getElementById('imageModal').style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('imageModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            crearParticulas();
-            
-            const stateName = document.querySelector('.state-name');
-            const originalText = stateName.textContent;
-            stateName.textContent = '';
-            
-            let i = 0;
-            const typeWriter = () => {
-                if (i < originalText.length) {
-                    stateName.textContent += originalText.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 60);
+        // Configuración y estado global
+        const API_CONFIG = {
+            groq: {
+                endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+                models: {
+                    'llama-3.1-8b-instant': 'Llama 3.1 8B',
+                    'llama-3.1-70b-versatile': 'Llama 3.1 70B', 
+                    'mixtral-8x7b-32768': 'Mixtral 8x7B'
                 }
-            };
+            }
+        };
+
+        let groqApiKey = '';
+        let selectedModel = 'llama-3.1-8b-instant';
+        let isConfigured = false;
+        let currentChatId = null;
+        let chats = {};
+
+        // Función mejorada para renderizar matemáticas
+        function renderMathInElement(element) {
+            if (typeof renderMathInElement === 'undefined') return;
             
-            setTimeout(typeWriter, 500);
+            try {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false},
+                        {left: "\\[", right: "\\]", display: true}
+                    ],
+                    throwOnError: false,
+                    errorColor: "#cc0000"
+                });
+            } catch (error) {
+                console.error('Error renderizando matemáticas:', error);
+            }
+        }
+
+        // Función para procesar y renderizar fórmulas matemáticas
+        function processMathFormulas(text) {
+            // Procesar fórmulas en bloque ($$...$$)
+            text = text.replace(/\$\$(.*?)\$\$/g, function(match, formula) {
+                try {
+                    return katex.renderToString(formula, { displayMode: true, throwOnError: false });
+                } catch (e) {
+                    console.error('Error renderizando fórmula en bloque:', e);
+                    return match;
+                }
+            });
+
+            // Procesar fórmulas en línea ($...$)
+            text = text.replace(/\$(.*?)\$/g, function(match, formula) {
+                try {
+                    return katex.renderToString(formula, { displayMode: false, throwOnError: false });
+                } catch (e) {
+                    console.error('Error renderizando fórmula en línea:', e);
+                    return match;
+                }
+            });
+
+            // Procesar fórmulas con delimitadores LaTeX (\[...\])
+            text = text.replace(/\\\[(.*?)\\\]/g, function(match, formula) {
+                try {
+                    return katex.renderToString(formula, { displayMode: true, throwOnError: false });
+                } catch (e) {
+                    console.error('Error renderizando fórmula \\[...\\]:', e);
+                    return match;
+                }
+            });
+
+            // Procesar fórmulas con delimitadores LaTeX (\(...\))
+            text = text.replace(/\\\((.*?)\\\)/g, function(match, formula) {
+                try {
+                    return katex.renderToString(formula, { displayMode: false, throwOnError: false });
+                } catch (e) {
+                    console.error('Error renderizando fórmula \\(...\\):', e);
+                    return match;
+                }
+            });
+
+            return text;
+        }
+
+        // Función para formatear texto manteniendo las fórmulas
+        function formatTextWithMath(text) {
+            if (!text) return '';
+            
+            // Primero procesar las fórmulas matemáticas
+            let processedText = processMathFormulas(text);
+            
+            // Luego aplicar formato HTML básico
+            processedText = processedText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            return processedText.startsWith('<p>') ? processedText : '<p>' + processedText + '</p>';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const configToggle = document.getElementById('configToggle');
+            const configPanel = document.getElementById('configPanel');
+            const closeConfig = document.getElementById('closeConfig');
+            const groqApiKeyInput = document.getElementById('groqApiKey');
+            const saveConfig = document.getElementById('saveConfig');
+            const modelSelect = document.getElementById('modelSelect');
+            const apiSuccess = document.getElementById('apiSuccess');
+            const apiError = document.getElementById('apiError');
+            const statusText = document.getElementById('statusText');
+            const newChatBtn = document.getElementById('newChatBtn');
+            const historyList = document.getElementById('historyList');
+            const emptyHistory = document.getElementById('emptyHistory');
+            const currentChatTitle = document.getElementById('currentChatTitle');
+            const clearHistory = document.getElementById('clearHistory');
+            const searchHistory = document.getElementById('searchHistory');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            // Prompt del sistema optimizado para matemáticas
+            const systemPrompt = `Eres UPC•IA, un asistente inteligente universitario especializado en matemáticas, ciencias e ingeniería.
+
+INSTRUCCIONES CRÍTICAS PARA FÓRMULAS MATEMÁTICAS:
+- Para TODAS las fórmulas matemáticas, usa EXCLUSIVAMENTE estos delimitadores:
+  * Fórmulas EN LÍNEA: $fórmula$ 
+  * Fórmulas de BLOQUE: $$fórmula$$
+
+EJEMPLOS CORRECTOS:
+- La derivada parcial: $\\frac{\\partial f}{\\partial x} = \\lim_{\\Delta x \\to 0} \\frac{f(x + \\Delta x, y) - f(x,y)}{\\Delta x}$
+- Teorema fundamental: $$\\int_a^b f'(x) dx = f(b) - f(a)$$
+- Fórmula cuadrática: $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+
+NO uses \\[ \\] o \\( \\) - solo $ y $$.
+
+Además:
+- Usa **negritas** para conceptos importantes
+- Explica paso a paso los procedimientos matemáticos
+- Sé claro y detallado en tus explicaciones`;
+
+            // Inicializar la aplicación
+            initializeApp();
+
+            // Nueva conversación
+            newChatBtn.addEventListener('click', createNewChat);
+
+            // Limpiar historial
+            clearHistory.addEventListener('click', clearAllHistory);
+
+            // Buscar conversaciones
+            searchHistory.addEventListener('input', filterHistory);
+
+            // Toggle sidebar en móviles
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+
+            // Toggle configuración
+            configToggle.addEventListener('click', function() {
+                configPanel.style.display = configPanel.style.display === 'block' ? 'none' : 'block';
+            });
+
+            closeConfig.addEventListener('click', function() {
+                configPanel.style.display = 'none';
+            });
+
+            // Cerrar panel al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                if (!configToggle.contains(event.target) && !configPanel.contains(event.target) && configPanel.style.display === 'block') {
+                    configPanel.style.display = 'none';
+                }
+            });
+
+            // Enviar mensajes
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+
+                if (!currentChatId) {
+                    createNewChat();
+                }
+
+                const userMessageId = 'msg_' + Date.now();
+                addMessageToChat(message, 'user', userMessageId);
+
+                userInput.value = '';
+                sendButton.disabled = true;
+
+                typingIndicator.style.display = 'block';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                let botResponseText = '';
+                const botMessageId = 'msg_' + Date.now() + '_bot';
+
+                try {
+                    botResponseText = await getAIResponse(message);
+                    addMessageToChat(botResponseText, 'bot', botMessageId);
+
+                    updateChatTitle(message);
+                    updateHistoryDisplay();
+                    saveChatsToStorage();
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessageToChat(`<div class="error-message">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>`, 'bot');
+                } finally {
+                    typingIndicator.style.display = 'none';
+                    sendButton.disabled = false;
+                    userInput.focus();
+                }
+            }
+
+            async function getAIResponse(message) {
+                if (!groqApiKey) {
+                    throw new Error('Configura la API key en el panel de configuración ⚙️');
+                }
+
+                return await callGroqAPI(message);
+            }
+
+            async function callGroqAPI(message) {
+                const payload = {
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: message }
+                    ],
+                    model: selectedModel,
+                    temperature: 0.7,
+                    max_tokens: 4096,
+                    top_p: 1,
+                    stream: false
+                };
+
+                const response = await fetch(API_CONFIG.groq.endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${groqApiKey}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.error?.message || `Error HTTP ${response.status}`;
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    return data.choices[0].message.content;
+                } else {
+                    throw new Error('Respuesta inválida de la API');
+                }
+            }
+
+            function addMessageToChat(text, sender, messageId) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+                messageDiv.dataset.messageId = messageId;
+
+                const messageText = document.createElement('div');
+                messageText.classList.add('response-content');
+                
+                if (sender === 'bot') {
+                    // Para el bot, procesar matemáticas y formato
+                    messageText.innerHTML = formatTextWithMath(text);
+                } else {
+                    // Para el usuario, texto simple
+                    messageText.textContent = text;
+                }
+                
+                messageDiv.appendChild(messageText);
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.classList.add('message-time');
+                const now = new Date();
+                timeDiv.textContent = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+                messageDiv.appendChild(timeDiv);
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Guardar mensaje en el chat actual
+                if (currentChatId && chats[currentChatId]) {
+                    const messageData = {
+                        id: messageId,
+                        text: text,
+                        sender: sender,
+                        time: new Date().toISOString()
+                    };
+                    chats[currentChatId].messages.push(messageData);
+                    chats[currentChatId].updatedAt = new Date().toISOString();
+                }
+            }
+
+            function createNewChat() {
+                const chatId = 'chat_' + Date.now();
+                currentChatId = chatId;
+                
+                chats[chatId] = {
+                    id: chatId,
+                    title: 'Nueva Conversación',
+                    messages: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                chatMessages.innerHTML = `
+                    <div class="welcome-container">
+                        <h1 class="welcome-title">¡Bienvenido a UPC•IA! 🚀</h1>
+                        <p class="welcome-subtitle">
+                            Soy tu asistente inteligente especializado en educación superior. 
+                            Puedo ayudarte con matemáticas, programación, ciencias, investigación 
+                            y cualquier tema académico que necesites.
+                        </p>
+                        
+                        <div class="capabilities-grid">
+                            <div class="capability-card">
+                                <div class="capability-icon">🧮</div>
+                                <div class="capability-text">Cálculo y Álgebra</div>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-icon">💻</div>
+                                <div class="capability-text">Programación</div>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-icon">🔬</div>
+                                <div class="capability-text">Ciencias e Ingeniería</div>
+                            </div>
+                            <div class="capability-card">
+                                <div class="capability-icon">📚</div>
+                                <div class="capability-text">Investigación</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                currentChatTitle.textContent = 'Nueva Conversación';
+                
+                updateHistoryDisplay();
+                saveChatsToStorage();
+                userInput.focus();
+            }
+
+            function updateChatTitle(firstMessage) {
+                if (currentChatId && chats[currentChatId] && chats[currentChatId].title === 'Nueva Conversación') {
+                    const title = firstMessage.length > 30 ? firstMessage.substring(0, 30) + '...' : firstMessage;
+                    chats[currentChatId].title = title;
+                    currentChatTitle.textContent = title;
+                    updateHistoryDisplay();
+                }
+            }
+
+            function updateHistoryDisplay() {
+                const chatArray = Object.values(chats).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                
+                if (chatArray.length === 0) {
+                    emptyHistory.style.display = 'block';
+                    historyList.innerHTML = '';
+                    return;
+                }
+                
+                emptyHistory.style.display = 'none';
+                historyList.innerHTML = '';
+                
+                chatArray.forEach(chat => {
+                    const historyItem = document.createElement('div');
+                    historyItem.classList.add('history-item');
+                    if (chat.id === currentChatId) {
+                        historyItem.classList.add('active');
+                    }
+                    
+                    let previewText = 'Sin mensajes';
+                    if (chat.messages.length > 0) {
+                        const userMessages = chat.messages.filter(msg => msg.sender === 'user');
+                        if (userMessages.length > 0) {
+                            const lastUserMsg = userMessages[userMessages.length - 1].text;
+                            previewText = lastUserMsg.substring(0, 50) + (lastUserMsg.length > 50 ? '...' : '');
+                        }
+                    }
+                    
+                    const time = new Date(chat.updatedAt).toLocaleTimeString('es-ES', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    historyItem.innerHTML = `
+                        <div class="history-preview">${previewText}</div>
+                        <div class="history-time">${time}</div>
+                        <button class="delete-history" data-chat-id="${chat.id}" title="Eliminar conversación">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    historyItem.addEventListener('click', (e) => {
+                        if (!e.target.closest('.delete-history')) {
+                            loadChat(chat.id);
+                        }
+                    });
+                    
+                    const deleteBtn = historyItem.querySelector('.delete-history');
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteChat(chat.id);
+                    });
+                    
+                    historyList.appendChild(historyItem);
+                });
+            }
+
+            function filterHistory() {
+                const searchTerm = searchHistory.value.toLowerCase().trim();
+                const historyItems = document.querySelectorAll('.history-item');
+                
+                historyItems.forEach(item => {
+                    const preview = item.querySelector('.history-preview').textContent.toLowerCase();
+                    if (preview.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            function loadChat(chatId) {
+                currentChatId = chatId;
+                const chat = chats[chatId];
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                messagesContainer.innerHTML = ''; 
+                currentChatTitle.textContent = chat.title;
+                
+                // Cargar mensajes
+                chat.messages.forEach(msg => {
+                    if (msg.sender === 'bot') {
+                        addMessageToChat(msg.text, 'bot', msg.id);
+                    } else {
+                        addMessageToChat(msg.text, 'user', msg.id);
+                    }
+                });
+
+                updateHistoryDisplay();
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                }
+                
+                userInput.focus();
+            }
+
+            function deleteChat(chatId) {
+                if (confirm('¿Estás seguro de que quieres eliminar esta conversación?')) {
+                    delete chats[chatId];
+                    
+                    if (currentChatId === chatId) {
+                        const remainingChats = Object.values(chats).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                        if (remainingChats.length > 0) {
+                            loadChat(remainingChats[0].id);
+                        } else {
+                            createNewChat();
+                        }
+                    }
+                    
+                    updateHistoryDisplay();
+                    saveChatsToStorage();
+                }
+            }
+
+            function clearAllHistory() {
+                if (Object.keys(chats).length === 0) return;
+                
+                if (confirm('¿Estás seguro de que quieres eliminar todo el historial de conversaciones?')) {
+                    chats = {};
+                    createNewChat();
+                    updateHistoryDisplay();
+                    saveChatsToStorage();
+                }
+            }
+
+            function initializeApp() {
+                loadSavedConfig();
+                loadChatsFromStorage();
+                
+                if (Object.keys(chats).length === 0) {
+                    createNewChat();
+                } else {
+                    const mostRecentChat = Object.values(chats)
+                        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
+                    loadChat(mostRecentChat.id);
+                }
+            }
+
+            function loadSavedConfig() {
+                const savedGroqKey = localStorage.getItem('groq_api_key');
+                const savedModel = localStorage.getItem('selected_model');
+                
+                if (savedGroqKey) {
+                    groqApiKey = savedGroqKey;
+                    groqApiKeyInput.value = '••••••••••••••••';
+                    isConfigured = true;
+                    statusText.textContent = 'Conectado';
+                }
+                
+                if (savedModel && API_CONFIG.groq.models[savedModel]) {
+                    selectedModel = savedModel;
+                    modelSelect.value = selectedModel;
+                }
+            }
+
+            function loadChatsFromStorage() {
+                const savedChats = localStorage.getItem('upc_ia_chats');
+                
+                if (savedChats) {
+                    try {
+                        chats = JSON.parse(savedChats);
+                    } catch (e) {
+                        console.error('Error cargando chats:', e);
+                        chats = {};
+                    }
+                }
+            }
+
+            function saveChatsToStorage() {
+                try {
+                    localStorage.setItem('upc_ia_chats', JSON.stringify(chats));
+                localStorage.setItem('selected_model', selectedModel);
+                    if (groqApiKey) {
+                        localStorage.setItem('groq_api_key', groqApiKey);
+                    }
+                } catch (e) {
+                    console.error('Error guardando datos:', e);
+                }
+            }
+
+            function saveConfiguration() {
+                const key = groqApiKeyInput.value.trim();
+                
+                if (key && !key.startsWith('••••')) {
+                    groqApiKey = key;
+                    localStorage.setItem('groq_api_key', key);
+                    groqApiKeyInput.value = '••••••••••••••••';
+                    
+                    selectedModel = modelSelect.value;
+                    localStorage.setItem('selected_model', selectedModel);
+                    
+                    showSuccess('✅ Configuración guardada correctamente');
+                    isConfigured = true;
+                    statusText.textContent = 'Conectado';
+                    
+                } else if (key === '••••••••••••••••' && groqApiKey) {
+                    showSuccess('✅ La configuración ya está guardada');
+                } else {
+                    showError('❌ Por favor, ingresa una API key válida');
+                }
+            }
+
+            function showSuccess(message) {
+                apiSuccess.textContent = message;
+                apiSuccess.style.display = 'block';
+                apiError.style.display = 'none';
+                
+                setTimeout(() => {
+                    apiSuccess.style.display = 'none';
+                }, 3000);
+            }
+
+            function showError(message) {
+                apiError.textContent = message;
+                apiError.style.display = 'block';
+                apiSuccess.style.display = 'none';
+                
+                setTimeout(() => {
+                    apiError.style.display = 'none';
+                }, 3000);
+            }
+
+            // Event listeners
+            saveConfig.addEventListener('click', saveConfiguration);
+            modelSelect.addEventListener('change', function() {
+                selectedModel = this.value;
+                if (groqApiKey) {
+                    localStorage.setItem('selected_model', selectedModel);
+                }
+            });
+
+            groqApiKeyInput.addEventListener('focus', function() {
+                if (this.value === '••••••••••••••••' && groqApiKey) {
+                    this.type = 'text';
+                    this.value = groqApiKey;
+                }
+            });
+
+            groqApiKeyInput.addEventListener('blur', function() {
+                if (this.value === groqApiKey && groqApiKey) {
+                    this.type = 'password';
+                    this.value = '••••••••••••••••';
+                }
+            });
+
+            // Envío de mensajes
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Auto-focus
+            userInput.focus();
         });
     </script>
 </body>
